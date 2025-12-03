@@ -1,6 +1,7 @@
 package nl.novi.controller.controllers;
 
 import nl.novi.controller.entities.Genre;
+import nl.novi.controller.helpers.UrlHelper;
 import nl.novi.controller.services.GenreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,19 +14,24 @@ import java.util.List;
 public class GenreController {
 
     private final GenreService genreService;
+    private final UrlHelper urlHelper;
 
     // Constructor injection
-    public GenreController(GenreService genreService) {
+    public GenreController(GenreService genreService, UrlHelper urlHelper) {
         this.genreService = genreService;
+        this.urlHelper = urlHelper;
     }
+
 
 
     // POST / create
     @PostMapping("/genres")
-    public ResponseEntity<Genre> postGenre(@ResponseBody Genre genre) {
+    public ResponseEntity<Genre> postGenre(@RequestBody Genre genre) {
         Genre newGenre = genreService.createGenre(genre);
-        return ResponseEntity.created(newGenre);
+        return ResponseEntity.created(urlHelper.getCurrentUrlWithId(newGenre.getId()))
+                .body(newGenre);
     }
+
 
     // GET ALL / read
     @GetMapping("/genres")
@@ -33,6 +39,7 @@ public class GenreController {
         List<Genre> genres = genreService.findAllGenres();
         return ResponseEntity.ok(genres);
     }
+
 
     // GET ONE / read
     @GetMapping("/genres/{id}")
@@ -52,9 +59,9 @@ public class GenreController {
 
     // DELETE / delete
     @DeleteMapping("/genres/{id}")
-    public ResponseEntity<> deleteGenre(@PathVariable Long id) {
-        Genre deleteGenre = genreService.deleteGenre(id);
-        return ResponseEntity.noContent();
+    public ResponseEntity<Void> deleteGenre(@PathVariable Long id) {
+        genreService.deleteGenre(id);
+        return ResponseEntity.noContent().build();
     }
 
 
