@@ -71,6 +71,8 @@ public class GenreService {
 
         existingGenreEntity.setName(genreInput.getName());
         existingGenreEntity.setDescription(genreInput.getDescription());
+
+        return existingGenreEntity;
     }
 
 
